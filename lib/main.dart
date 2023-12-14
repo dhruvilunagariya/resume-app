@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:resumemaker/cv_profile_screen.dart';
+import 'package:resumemaker/home_screen.dart';
 
-void main() {
+Future<void> main() async {
+  await GetStorage.init();
   runApp(const MyApp());
 }
 
@@ -17,7 +20,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
           appBarTheme: AppBarTheme(
               backgroundColor: Colors.blue, foregroundColor: Colors.white)),
-      home: CvProfileScreen(),
+      home: HomeScreen(),
     );
   }
 }

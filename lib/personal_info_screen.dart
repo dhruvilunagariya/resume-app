@@ -1,10 +1,17 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:resumemaker/controller/personal_info_controller.dart';
+import 'package:resumemaker/controller/resume_controllet.dart';
+import 'package:resumemaker/model/resume_data_model.dart';
 
 class PersonalInfoScreen extends StatefulWidget {
-  PersonalInfoScreen({Key? key}) : super(key: key);
+  int? index;
+  ResumeDataModel? resumeData;
+  PersonalInfoScreen({Key? key, this.resumeData, this.index}) : super(key: key);
 
   @override
   State<PersonalInfoScreen> createState() => _PersonalInfoScreenState();
@@ -13,6 +20,33 @@ class PersonalInfoScreen extends StatefulWidget {
 class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   final personalInfoController =
       Get.put<PersonalInfoController>(PersonalInfoController());
+
+  final resumeController = Get.find<ResumeController>();
+
+  // Function to update an item at a specific index
+  void updateItem(int index, ResumeDataModel newValue) {
+    if (index >= 0 && index < resumeController.resumeList.length) {
+      resumeController.resumeList[index] = newValue;
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    if (widget.resumeData != null) {
+      personalInfoController.firstName.text =
+          widget.resumeData?.firstName ?? "";
+      personalInfoController.lastName.text = widget.resumeData?.lastName ?? "";
+      personalInfoController.dob.text = widget.resumeData?.dob ?? "";
+      personalInfoController.profession.text =
+          widget.resumeData?.designation ?? "";
+      personalInfoController.email.text = widget.resumeData?.email ?? "";
+      personalInfoController.phone.text = widget.resumeData?.phone ?? "";
+      personalInfoController.selectedGender.value =
+          widget.resumeData?.gender ?? "";
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -131,7 +165,33 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                 height: 20,
               ),
               MaterialButton(
-                onPressed: () {},
+                onPressed: () {
+                  if (widget.resumeData != null) {
+                    updateItem(
+                        widget.index ?? 0,
+                        ResumeDataModel(
+                          firstName: personalInfoController.firstName.text,
+                          lastName: personalInfoController.lastName.text,
+                          dob: personalInfoController.dob.text,
+                          designation: personalInfoController.profession.text,
+                          email: personalInfoController.email.text,
+                          gender: personalInfoController.selectedGender.value,
+                          phone: personalInfoController.phone.text,
+                        ));
+                  } else {
+                    resumeController.resumeList.add(ResumeDataModel(
+                      firstName: personalInfoController.firstName.text,
+                      lastName: personalInfoController.lastName.text,
+                      dob: personalInfoController.dob.text,
+                      designation: personalInfoController.profession.text,
+                      email: personalInfoController.email.text,
+                      gender: personalInfoController.selectedGender.value,
+                      phone: personalInfoController.phone.text,
+                    ));
+                  }
+
+                  Get.back();
+                },
                 color: Colors.blue,
                 height: 50,
                 minWidth: Get.width,
